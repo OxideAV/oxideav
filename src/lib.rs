@@ -108,6 +108,8 @@ pub use oxideav_subtitle as subtitle;
 pub use oxideav_theora as theora;
 #[cfg(feature = "vorbis")]
 pub use oxideav_vorbis as vorbis;
+#[cfg(feature = "vp6")]
+pub use oxideav_vp6 as vp6;
 #[cfg(feature = "vp8")]
 pub use oxideav_vp8 as vp8;
 #[cfg(feature = "vp9")]
@@ -266,6 +268,10 @@ impl Registries {
         #[cfg(feature = "vp8")]
         {
             oxideav_vp8::register(&mut codecs, &mut containers);
+        }
+        #[cfg(feature = "vp6")]
+        {
+            oxideav_vp6::register(&mut codecs);
         }
         #[cfg(feature = "webp")]
         {
