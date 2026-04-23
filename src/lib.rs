@@ -58,10 +58,14 @@ pub use oxideav_g728 as g728;
 pub use oxideav_g729 as g729;
 #[cfg(feature = "gif")]
 pub use oxideav_gif as gif;
+#[cfg(feature = "ilbc")]
+pub use oxideav_ilbc as ilbc;
 #[cfg(feature = "gsm")]
 pub use oxideav_gsm as gsm;
 #[cfg(feature = "h263")]
 pub use oxideav_h263 as h263;
+#[cfg(feature = "h261")]
+pub use oxideav_h261 as h261;
 #[cfg(feature = "h264")]
 pub use oxideav_h264 as h264;
 #[cfg(feature = "h265")]
@@ -245,6 +249,10 @@ impl Registries {
         {
             oxideav_g729::register(&mut codecs);
         }
+        #[cfg(feature = "ilbc")]
+        {
+            oxideav_ilbc::register(&mut codecs);
+        }
         #[cfg(feature = "gsm")]
         {
             oxideav_gsm::register(&mut codecs);
@@ -284,6 +292,10 @@ impl Registries {
         #[cfg(feature = "h263")]
         {
             oxideav_h263::register(&mut codecs);
+        }
+        #[cfg(feature = "h261")]
+        {
+            oxideav_h261::register(&mut codecs);
         }
         #[cfg(feature = "vp8")]
         {
