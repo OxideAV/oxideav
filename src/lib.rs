@@ -22,6 +22,8 @@ pub use oxideav_http as http;
 pub use oxideav_aac as aac;
 #[cfg(feature = "ac3")]
 pub use oxideav_ac3 as ac3;
+#[cfg(feature = "ac4")]
+pub use oxideav_ac4 as ac4;
 #[cfg(feature = "amv")]
 pub use oxideav_amv as amv;
 #[cfg(feature = "ass")]
@@ -210,6 +212,10 @@ impl Registries {
         #[cfg(feature = "ac3")]
         {
             oxideav_ac3::register(&mut codecs);
+        }
+        #[cfg(feature = "ac4")]
+        {
+            oxideav_ac4::register(&mut codecs);
         }
         #[cfg(feature = "celt")]
         {

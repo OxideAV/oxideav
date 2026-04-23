@@ -38,6 +38,7 @@ default = [
     "theora",
     "aac",
     "ac3",
+    "ac4",
     "celt",
     "g711",
     "g722",
@@ -96,6 +97,7 @@ msmpeg4 = ["dep:oxideav-msmpeg4"]
 theora = ["dep:oxideav-theora"]
 aac = ["dep:oxideav-aac"]
 ac3 = ["dep:oxideav-ac3"]
+ac4 = ["dep:oxideav-ac4"]
 celt = ["dep:oxideav-celt"]
 g711 = ["dep:oxideav-g711"]
 g722 = ["dep:oxideav-g722"]
@@ -160,6 +162,7 @@ oxideav-msmpeg4 = { workspace = true, optional = true }
 oxideav-theora = { workspace = true, optional = true }
 oxideav-aac = { workspace = true, optional = true }
 oxideav-ac3 = { workspace = true, optional = true }
+oxideav-ac4 = { workspace = true, optional = true }
 oxideav-celt = { workspace = true, optional = true }
 oxideav-g711 = { workspace = true, optional = true }
 oxideav-g722 = { workspace = true, optional = true }
