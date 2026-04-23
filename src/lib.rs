@@ -40,6 +40,8 @@ pub use oxideav_avif as avif;
 pub use oxideav_basic as basic;
 #[cfg(feature = "celt")]
 pub use oxideav_celt as celt;
+#[cfg(feature = "dirac")]
+pub use oxideav_dirac as dirac;
 #[cfg(feature = "ffv1")]
 pub use oxideav_ffv1 as ffv1;
 #[cfg(feature = "flac")]
@@ -64,6 +66,8 @@ pub use oxideav_h263 as h263;
 pub use oxideav_h264 as h264;
 #[cfg(feature = "h265")]
 pub use oxideav_h265 as h265;
+#[cfg(feature = "h266")]
+pub use oxideav_h266 as h266;
 #[cfg(feature = "iff")]
 pub use oxideav_iff as iff;
 #[cfg(feature = "jpeg2000")]
@@ -269,6 +273,10 @@ impl Registries {
         {
             oxideav_h265::register(&mut codecs);
         }
+        #[cfg(feature = "h266")]
+        {
+            oxideav_h266::register(&mut codecs);
+        }
         #[cfg(feature = "h264")]
         {
             oxideav_h264::register(&mut codecs);
@@ -320,6 +328,10 @@ impl Registries {
         #[cfg(feature = "ffv1")]
         {
             oxideav_ffv1::register(&mut codecs);
+        }
+        #[cfg(feature = "dirac")]
+        {
+            oxideav_dirac::register(&mut codecs);
         }
         #[cfg(feature = "prores")]
         {
