@@ -24,6 +24,8 @@ pub use oxideav_aac as aac;
 pub use oxideav_ac3 as ac3;
 #[cfg(feature = "ac4")]
 pub use oxideav_ac4 as ac4;
+#[cfg(feature = "adpcm")]
+pub use oxideav_adpcm as adpcm;
 #[cfg(feature = "amv")]
 pub use oxideav_amv as amv;
 #[cfg(feature = "ass")]
@@ -244,6 +246,10 @@ impl Registries {
         #[cfg(feature = "g722")]
         {
             oxideav_g722::register(&mut codecs);
+        }
+        #[cfg(feature = "adpcm")]
+        {
+            oxideav_adpcm::register(&mut codecs);
         }
         #[cfg(feature = "g7231")]
         {

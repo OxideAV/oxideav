@@ -43,6 +43,7 @@ default = [
     "celt",
     "g711",
     "g722",
+    "adpcm",
     "g7231",
     "g728",
     "g729",
@@ -107,6 +108,7 @@ ac4 = ["dep:oxideav-ac4"]
 celt = ["dep:oxideav-celt"]
 g711 = ["dep:oxideav-g711"]
 g722 = ["dep:oxideav-g722"]
+adpcm = ["dep:oxideav-adpcm"]
 g7231 = ["dep:oxideav-g7231"]
 g728 = ["dep:oxideav-g728"]
 g729 = ["dep:oxideav-g729"]
@@ -180,6 +182,7 @@ oxideav-ac4 = { workspace = true, optional = true }
 oxideav-celt = { workspace = true, optional = true }
 oxideav-g711 = { workspace = true, optional = true }
 oxideav-g722 = { workspace = true, optional = true }
+oxideav-adpcm = { workspace = true, optional = true }
 oxideav-g7231 = { workspace = true, optional = true }
 oxideav-g728 = { workspace = true, optional = true }
 oxideav-g729 = { workspace = true, optional = true }
