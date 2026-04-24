@@ -24,6 +24,7 @@ default = [
     "webm",
     "mp4",
     "avi",
+    "flv",
     "iff",
     "amiga_mod",
     "s3m",
@@ -84,6 +85,7 @@ mkv = ["dep:oxideav-mkv"]
 webm = ["mkv"]
 mp4 = ["dep:oxideav-mp4"]
 avi = ["dep:oxideav-avi"]
+flv = ["dep:oxideav-flv"]
 iff = ["dep:oxideav-iff"]
 amiga_mod = ["dep:oxideav-mod"]
 s3m = ["dep:oxideav-s3m"]
@@ -141,6 +143,9 @@ audio_filter = ["dep:oxideav-audio-filter"]
 pixfmt = ["dep:oxideav-pixfmt"]
 # HTTP/HTTPS source driver. Off by default — opt in to link ureq + rustls.
 http = ["dep:oxideav-http"]
+# Time-based scene / composition model. Off by default — experimental
+# scaffold (PDF pages, RTMP compositor, NLE timelines).
+scene = ["dep:oxideav-scene"]
 
 [dependencies]
 oxideav-core = { workspace = true }
@@ -157,6 +162,7 @@ oxideav-flac = { workspace = true, optional = true }
 oxideav-mkv = { workspace = true, optional = true }
 oxideav-mp4 = { workspace = true, optional = true }
 oxideav-avi = { workspace = true, optional = true }
+oxideav-flv = { workspace = true, optional = true }
 oxideav-iff = { workspace = true, optional = true }
 oxideav-mod = { workspace = true, optional = true }
 oxideav-s3m = { workspace = true, optional = true }
@@ -204,3 +210,4 @@ oxideav-jpeg2000 = { workspace = true, optional = true }
 oxideav-avif = { workspace = true, optional = true }
 oxideav-audio-filter = { workspace = true, optional = true }
 oxideav-pixfmt = { workspace = true, optional = true }
+oxideav-scene = { workspace = true, optional = true }

@@ -46,6 +46,8 @@ pub use oxideav_dirac as dirac;
 pub use oxideav_ffv1 as ffv1;
 #[cfg(feature = "flac")]
 pub use oxideav_flac as flac;
+#[cfg(feature = "flv")]
+pub use oxideav_flv as flv;
 #[cfg(feature = "g711")]
 pub use oxideav_g711 as g711;
 #[cfg(feature = "g722")]
@@ -110,6 +112,8 @@ pub use oxideav_png as png;
 pub use oxideav_prores as prores;
 #[cfg(feature = "s3m")]
 pub use oxideav_s3m as s3m;
+#[cfg(feature = "scene")]
+pub use oxideav_scene as scene;
 #[cfg(feature = "speex")]
 pub use oxideav_speex as speex;
 #[cfg(feature = "sub_image")]
@@ -176,6 +180,10 @@ impl Registries {
         #[cfg(feature = "avi")]
         {
             oxideav_avi::register(&mut containers);
+        }
+        #[cfg(feature = "flv")]
+        {
+            oxideav_flv::register(&mut containers);
         }
         #[cfg(feature = "iff")]
         {
