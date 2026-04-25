@@ -70,6 +70,7 @@ default = [
     "dirac",
     "prores",
     "audio_filter",
+    "image_filter",
     "pixfmt",
     "jpegxl",
     "jpeg2000",
@@ -142,6 +143,7 @@ jpeg2000 = ["dep:oxideav-jpeg2000"]
 jp2 = ["jpeg2000"]
 avif = ["dep:oxideav-avif"]
 audio_filter = ["dep:oxideav-audio-filter"]
+image_filter = ["dep:oxideav-image-filter"]
 pixfmt = ["dep:oxideav-pixfmt"]
 # HTTP/HTTPS source driver. Off by default — opt in to link ureq + rustls.
 http = ["dep:oxideav-http"]
@@ -212,5 +214,6 @@ oxideav-jpegxl = { workspace = true, optional = true }
 oxideav-jpeg2000 = { workspace = true, optional = true }
 oxideav-avif = { workspace = true, optional = true }
 oxideav-audio-filter = { workspace = true, optional = true }
+oxideav-image-filter = { workspace = true, optional = true }
 oxideav-pixfmt = { workspace = true, optional = true }
 oxideav-scene = { workspace = true, optional = true }

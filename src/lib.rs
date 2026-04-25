@@ -15,6 +15,8 @@ pub use oxideav_core as core;
 pub use oxideav_pipeline as pipeline;
 pub use oxideav_source as source;
 
+pub use oxideav_core::RuntimeContext;
+
 #[cfg(feature = "http")]
 pub use oxideav_http as http;
 
@@ -78,6 +80,8 @@ pub use oxideav_h265 as h265;
 pub use oxideav_h266 as h266;
 #[cfg(feature = "iff")]
 pub use oxideav_iff as iff;
+#[cfg(feature = "image_filter")]
+pub use oxideav_image_filter as image_filter;
 #[cfg(feature = "jpeg2000")]
 pub use oxideav_jpeg2000 as jpeg2000;
 #[cfg(feature = "jpegxl")]
@@ -135,253 +139,281 @@ pub use oxideav_vp9 as vp9;
 #[cfg(feature = "webp")]
 pub use oxideav_webp as webp;
 
-/// A pair of registries populated with every format enabled at build time.
-pub struct Registries {
-    pub codecs: oxideav_codec::CodecRegistry,
-    pub containers: oxideav_container::ContainerRegistry,
+/// Back-compat alias — historically the aggregator exposed
+/// `Registries` (codecs + containers). The unified context now lives
+/// in `oxideav-core` and bundles all four registries (codec /
+/// container / source / filter), so consumers should prefer
+/// [`RuntimeContext`] directly. The alias keeps existing call sites
+/// (`reg.codecs`, `reg.containers`) compiling unchanged.
+pub type Registries = RuntimeContext;
+
+/// Build a [`RuntimeContext`] populated with every codec / container /
+/// source / filter that's enabled at build time. Each `cfg(feature =
+/// "X")` block delegates to the sibling crate's unified
+/// `register(&mut RuntimeContext)` entry point where it exists, and
+/// falls back to the historical `register_codecs` /
+/// `register_containers` / `register(&mut CodecRegistry)` /
+/// `register(codecs, containers)` shapes otherwise.
+pub fn with_all_features() -> RuntimeContext {
+    #[allow(unused_mut)]
+    let mut ctx = RuntimeContext::new();
+
+    // Built-in source drivers (file://). Always installed.
+    oxideav_source::register(&mut ctx);
+
+    #[cfg(feature = "basic")]
+    {
+        oxideav_basic::register_codecs(&mut ctx.codecs);
+        oxideav_basic::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "ogg")]
+    {
+        oxideav_ogg::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "vorbis")]
+    {
+        oxideav_vorbis::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "opus")]
+    {
+        oxideav_opus::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "flac")]
+    {
+        oxideav_flac::register_codecs(&mut ctx.codecs);
+        oxideav_flac::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "mkv")]
+    {
+        oxideav_mkv::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "mp4")]
+    {
+        oxideav_mp4::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "avi")]
+    {
+        oxideav_avi::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "flv")]
+    {
+        oxideav_flv::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "iff")]
+    {
+        oxideav_iff::register(&mut ctx.containers);
+    }
+    #[cfg(feature = "amiga_mod")]
+    {
+        oxideav_mod::register_codecs(&mut ctx.codecs);
+        oxideav_mod::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "s3m")]
+    {
+        oxideav_s3m::register_codecs(&mut ctx.codecs);
+        oxideav_s3m::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "mp1")]
+    {
+        oxideav_mp1::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "mp2")]
+    {
+        oxideav_mp2::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "mp3")]
+    {
+        oxideav_mp3::register_codecs(&mut ctx.codecs);
+        oxideav_mp3::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "mjpeg")]
+    {
+        oxideav_mjpeg::register(&mut ctx.codecs);
+        oxideav_mjpeg::register_containers(&mut ctx.containers);
+    }
+    #[cfg(feature = "mpeg1video")]
+    {
+        oxideav_mpeg12video::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "aac")]
+    {
+        oxideav_aac::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "ac3")]
+    {
+        oxideav_ac3::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "ac4")]
+    {
+        oxideav_ac4::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "celt")]
+    {
+        oxideav_celt::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "g711")]
+    {
+        oxideav_g711::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "g722")]
+    {
+        oxideav_g722::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "adpcm")]
+    {
+        oxideav_adpcm::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "g7231")]
+    {
+        oxideav_g7231::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "g728")]
+    {
+        oxideav_g728::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "g729")]
+    {
+        oxideav_g729::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "ilbc")]
+    {
+        oxideav_ilbc::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "gsm")]
+    {
+        oxideav_gsm::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "speex")]
+    {
+        oxideav_speex::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "mpeg4video")]
+    {
+        oxideav_mpeg4video::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "msmpeg4")]
+    {
+        oxideav_msmpeg4::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "theora")]
+    {
+        oxideav_theora::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "vp9")]
+    {
+        oxideav_vp9::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "h265")]
+    {
+        oxideav_h265::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "h266")]
+    {
+        oxideav_h266::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "h264")]
+    {
+        oxideav_h264::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "h263")]
+    {
+        oxideav_h263::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "h261")]
+    {
+        oxideav_h261::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "vp8")]
+    {
+        oxideav_vp8::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "vp6")]
+    {
+        oxideav_vp6::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "webp")]
+    {
+        oxideav_webp::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "gif")]
+    {
+        oxideav_gif::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "png")]
+    {
+        oxideav_png::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "amv")]
+    {
+        oxideav_amv::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "subtitle")]
+    {
+        oxideav_subtitle::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "sub_image")]
+    {
+        oxideav_sub_image::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "ass")]
+    {
+        oxideav_ass::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "av1")]
+    {
+        oxideav_av1::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "ffv1")]
+    {
+        oxideav_ffv1::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "dirac")]
+    {
+        oxideav_dirac::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "prores")]
+    {
+        oxideav_prores::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "jpegxl")]
+    {
+        oxideav_jpegxl::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "jpeg2000")]
+    {
+        oxideav_jpeg2000::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "avif")]
+    {
+        oxideav_avif::register(&mut ctx.codecs);
+    }
+    #[cfg(feature = "audio_filter")]
+    {
+        oxideav_audio_filter::register(&mut ctx);
+    }
+    #[cfg(feature = "image_filter")]
+    {
+        oxideav_image_filter::register(&mut ctx);
+    }
+    #[cfg(feature = "http")]
+    {
+        oxideav_http::register(&mut ctx.sources);
+    }
+
+    ctx
 }
 
-impl Registries {
-    /// Build a fresh set of registries containing all compiled-in formats.
-    pub fn with_all_features() -> Self {
-        #[allow(unused_mut)]
-        let mut codecs = oxideav_codec::CodecRegistry::new();
-        #[allow(unused_mut)]
-        let mut containers = oxideav_container::ContainerRegistry::new();
-
-        #[cfg(feature = "basic")]
-        {
-            oxideav_basic::register_codecs(&mut codecs);
-            oxideav_basic::register_containers(&mut containers);
-        }
-        #[cfg(feature = "ogg")]
-        {
-            oxideav_ogg::register(&mut containers);
-        }
-        #[cfg(feature = "vorbis")]
-        {
-            oxideav_vorbis::register(&mut codecs);
-        }
-        #[cfg(feature = "opus")]
-        {
-            oxideav_opus::register(&mut codecs);
-        }
-        #[cfg(feature = "flac")]
-        {
-            oxideav_flac::register_codecs(&mut codecs);
-            oxideav_flac::register_containers(&mut containers);
-        }
-        #[cfg(feature = "mkv")]
-        {
-            oxideav_mkv::register(&mut containers);
-        }
-        #[cfg(feature = "mp4")]
-        {
-            oxideav_mp4::register(&mut containers);
-        }
-        #[cfg(feature = "avi")]
-        {
-            oxideav_avi::register(&mut containers);
-        }
-        #[cfg(feature = "flv")]
-        {
-            oxideav_flv::register(&mut containers);
-        }
-        #[cfg(feature = "iff")]
-        {
-            oxideav_iff::register(&mut containers);
-        }
-        #[cfg(feature = "amiga_mod")]
-        {
-            oxideav_mod::register_codecs(&mut codecs);
-            oxideav_mod::register_containers(&mut containers);
-        }
-        #[cfg(feature = "s3m")]
-        {
-            oxideav_s3m::register_codecs(&mut codecs);
-            oxideav_s3m::register_containers(&mut containers);
-        }
-        #[cfg(feature = "mp1")]
-        {
-            oxideav_mp1::register(&mut codecs);
-        }
-        #[cfg(feature = "mp2")]
-        {
-            oxideav_mp2::register(&mut codecs);
-        }
-        #[cfg(feature = "mp3")]
-        {
-            oxideav_mp3::register_codecs(&mut codecs);
-            oxideav_mp3::register_containers(&mut containers);
-        }
-        #[cfg(feature = "mjpeg")]
-        {
-            oxideav_mjpeg::register(&mut codecs);
-            oxideav_mjpeg::register_containers(&mut containers);
-        }
-        #[cfg(feature = "mpeg1video")]
-        {
-            oxideav_mpeg12video::register(&mut codecs);
-        }
-        #[cfg(feature = "aac")]
-        {
-            oxideav_aac::register(&mut codecs);
-        }
-        #[cfg(feature = "ac3")]
-        {
-            oxideav_ac3::register(&mut codecs);
-        }
-        #[cfg(feature = "ac4")]
-        {
-            oxideav_ac4::register(&mut codecs);
-        }
-        #[cfg(feature = "celt")]
-        {
-            oxideav_celt::register(&mut codecs);
-        }
-        #[cfg(feature = "g711")]
-        {
-            oxideav_g711::register(&mut codecs);
-        }
-        #[cfg(feature = "g722")]
-        {
-            oxideav_g722::register(&mut codecs);
-        }
-        #[cfg(feature = "adpcm")]
-        {
-            oxideav_adpcm::register(&mut codecs);
-        }
-        #[cfg(feature = "g7231")]
-        {
-            oxideav_g7231::register(&mut codecs);
-        }
-        #[cfg(feature = "g728")]
-        {
-            oxideav_g728::register(&mut codecs);
-        }
-        #[cfg(feature = "g729")]
-        {
-            oxideav_g729::register(&mut codecs);
-        }
-        #[cfg(feature = "ilbc")]
-        {
-            oxideav_ilbc::register(&mut codecs);
-        }
-        #[cfg(feature = "gsm")]
-        {
-            oxideav_gsm::register(&mut codecs);
-        }
-        #[cfg(feature = "speex")]
-        {
-            oxideav_speex::register(&mut codecs);
-        }
-        #[cfg(feature = "mpeg4video")]
-        {
-            oxideav_mpeg4video::register(&mut codecs);
-        }
-        #[cfg(feature = "msmpeg4")]
-        {
-            oxideav_msmpeg4::register(&mut codecs);
-        }
-        #[cfg(feature = "theora")]
-        {
-            oxideav_theora::register(&mut codecs);
-        }
-        #[cfg(feature = "vp9")]
-        {
-            oxideav_vp9::register(&mut codecs);
-        }
-        #[cfg(feature = "h265")]
-        {
-            oxideav_h265::register(&mut codecs);
-        }
-        #[cfg(feature = "h266")]
-        {
-            oxideav_h266::register(&mut codecs);
-        }
-        #[cfg(feature = "h264")]
-        {
-            oxideav_h264::register(&mut codecs);
-        }
-        #[cfg(feature = "h263")]
-        {
-            oxideav_h263::register(&mut codecs);
-        }
-        #[cfg(feature = "h261")]
-        {
-            oxideav_h261::register(&mut codecs);
-        }
-        #[cfg(feature = "vp8")]
-        {
-            oxideav_vp8::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "vp6")]
-        {
-            oxideav_vp6::register(&mut codecs);
-        }
-        #[cfg(feature = "webp")]
-        {
-            oxideav_webp::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "gif")]
-        {
-            oxideav_gif::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "png")]
-        {
-            oxideav_png::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "amv")]
-        {
-            oxideav_amv::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "subtitle")]
-        {
-            oxideav_subtitle::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "sub_image")]
-        {
-            oxideav_sub_image::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "ass")]
-        {
-            oxideav_ass::register(&mut codecs, &mut containers);
-        }
-        #[cfg(feature = "av1")]
-        {
-            oxideav_av1::register(&mut codecs);
-        }
-        #[cfg(feature = "ffv1")]
-        {
-            oxideav_ffv1::register(&mut codecs);
-        }
-        #[cfg(feature = "dirac")]
-        {
-            oxideav_dirac::register(&mut codecs);
-        }
-        #[cfg(feature = "prores")]
-        {
-            oxideav_prores::register(&mut codecs);
-        }
-        #[cfg(feature = "jpegxl")]
-        {
-            oxideav_jpegxl::register(&mut codecs);
-        }
-        #[cfg(feature = "jpeg2000")]
-        {
-            oxideav_jpeg2000::register(&mut codecs);
-        }
-        #[cfg(feature = "avif")]
-        {
-            oxideav_avif::register(&mut codecs);
-        }
-
-        Self { codecs, containers }
+impl RuntimeContextExt for RuntimeContext {
+    fn with_all_features() -> Self {
+        with_all_features()
     }
 }
 
-impl Default for Registries {
-    fn default() -> Self {
-        Self::with_all_features()
-    }
+/// Convenience trait so call sites can write
+/// `RuntimeContext::with_all_features()` (matching the historical
+/// `Registries::with_all_features()` shape) without depending on the
+/// free function's path.
+pub trait RuntimeContextExt {
+    /// See [`crate::with_all_features`].
+    fn with_all_features() -> Self;
 }
