@@ -1,15 +1,18 @@
 [package]
 name = "oxideav"
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
-license.workspace = true
-repository.workspace = true
-authors.workspace = true
+# Standalone-friendly literals — the sibling repo's CI doesn't have a
+# workspace root to inherit from. Workspace builds still work because
+# Cargo prefers the package-level values when both are defined.
+version = "0.0.3"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT"
+repository = "https://github.com/OxideAV/oxideav"
+authors = ["Mark Karpeles"]
 description = "Central aggregator crate for oxideav — re-exports and a prebuilt registry"
 
 readme = "README.md"
-homepage.workspace = true
+homepage = "https://github.com/OxideAV/oxideav"
 keywords = ["multimedia", "audio", "video", "codec", "transcoding"]
 categories = ["multimedia", "multimedia::encoding"]
 
@@ -155,66 +158,66 @@ scene = ["dep:oxideav-scene"]
 # Codec / container trait + registry types are now in oxideav-core
 # directly; the former oxideav-codec / oxideav-container shim crates
 # have been archived.
-oxideav-core = { workspace = true }
-oxideav-pipeline = { workspace = true }
-oxideav-source = { workspace = true }
-oxideav-http = { workspace = true, optional = true }
-oxideav-basic = { workspace = true, optional = true }
-oxideav-ogg = { workspace = true, optional = true }
-oxideav-vorbis = { workspace = true, optional = true }
-oxideav-opus = { workspace = true, optional = true }
-oxideav-flac = { workspace = true, optional = true }
-oxideav-mkv = { workspace = true, optional = true }
-oxideav-mp4 = { workspace = true, optional = true }
-oxideav-avi = { workspace = true, optional = true }
-oxideav-flv = { workspace = true, optional = true }
-oxideav-iff = { workspace = true, optional = true }
-oxideav-mod = { workspace = true, optional = true }
-oxideav-s3m = { workspace = true, optional = true }
-oxideav-mp1 = { workspace = true, optional = true }
-oxideav-mp2 = { workspace = true, optional = true }
-oxideav-mp3 = { workspace = true, optional = true }
-oxideav-mjpeg = { workspace = true, optional = true }
-oxideav-mpeg12video = { workspace = true, optional = true }
-oxideav-mpeg4video = { workspace = true, optional = true }
-oxideav-msmpeg4 = { workspace = true, optional = true }
-oxideav-theora = { workspace = true, optional = true }
-oxideav-aac = { workspace = true, optional = true }
-oxideav-ac3 = { workspace = true, optional = true }
-oxideav-ac4 = { workspace = true, optional = true }
-oxideav-celt = { workspace = true, optional = true }
-oxideav-g711 = { workspace = true, optional = true }
-oxideav-g722 = { workspace = true, optional = true }
-oxideav-adpcm = { workspace = true, optional = true }
-oxideav-g7231 = { workspace = true, optional = true }
-oxideav-g728 = { workspace = true, optional = true }
-oxideav-g729 = { workspace = true, optional = true }
-oxideav-ilbc = { workspace = true, optional = true }
-oxideav-gsm = { workspace = true, optional = true }
-oxideav-speex = { workspace = true, optional = true }
-oxideav-vp9 = { workspace = true, optional = true }
-oxideav-h265 = { workspace = true, optional = true }
-oxideav-h266 = { workspace = true, optional = true }
-oxideav-h264 = { workspace = true, optional = true }
-oxideav-av1 = { workspace = true, optional = true }
-oxideav-h263 = { workspace = true, optional = true }
-oxideav-h261 = { workspace = true, optional = true }
-oxideav-vp8 = { workspace = true, optional = true }
-oxideav-vp6 = { workspace = true, optional = true }
-oxideav-webp = { workspace = true, optional = true }
-oxideav-gif = { workspace = true, optional = true }
-oxideav-png = { workspace = true, optional = true }
-oxideav-amv = { workspace = true, optional = true }
-oxideav-subtitle = { workspace = true, optional = true }
-oxideav-sub-image = { workspace = true, optional = true }
-oxideav-ass = { workspace = true, optional = true }
-oxideav-ffv1 = { workspace = true, optional = true }
-oxideav-dirac = { workspace = true, optional = true }
-oxideav-prores = { workspace = true, optional = true }
-oxideav-jpegxl = { workspace = true, optional = true }
-oxideav-jpeg2000 = { workspace = true, optional = true }
-oxideav-avif = { workspace = true, optional = true }
-oxideav-audio-filter = { workspace = true, optional = true }
-oxideav-image-filter = { workspace = true, optional = true }
-oxideav-pixfmt = { workspace = true, optional = true }
-oxideav-scene = { workspace = true, optional = true }
+oxideav-core = { version = "0.1" }
+oxideav-pipeline = { version = "0.1" }
+oxideav-source = { version = "0.1" }
+oxideav-http = { version = "0.0", optional = true  }
+oxideav-basic = { version = "0.0", optional = true  }
+oxideav-ogg = { version = "0.1", optional = true  }
+oxideav-vorbis = { version = "0.0", optional = true  }
+oxideav-opus = { version = "0.0", optional = true  }
+oxideav-flac = { version = "0.0", optional = true  }
+oxideav-mkv = { version = "0.0", optional = true  }
+oxideav-mp4 = { version = "0.0", optional = true  }
+oxideav-avi = { version = "0.0", optional = true  }
+oxideav-flv = { version = "0.0", optional = true  }
+oxideav-iff = { version = "0.0", optional = true  }
+oxideav-mod = { version = "0.0", optional = true  }
+oxideav-s3m = { version = "0.0", optional = true  }
+oxideav-mp1 = { version = "0.0", optional = true  }
+oxideav-mp2 = { version = "0.0", optional = true  }
+oxideav-mp3 = { version = "0.0", optional = true  }
+oxideav-mjpeg = { version = "0.1", optional = true  }
+oxideav-mpeg12video = { version = "0.0", optional = true  }
+oxideav-mpeg4video = { version = "0.1", optional = true  }
+oxideav-msmpeg4 = { version = "0.0", optional = true  }
+oxideav-theora = { version = "0.0", optional = true  }
+oxideav-aac = { version = "0.0", optional = true  }
+oxideav-ac3 = { version = "0.0", optional = true  }
+oxideav-ac4 = { version = "0.0", optional = true  }
+oxideav-celt = { version = "0.1", optional = true  }
+oxideav-g711 = { version = "0.0", optional = true  }
+oxideav-g722 = { version = "0.0", optional = true  }
+oxideav-adpcm = { version = "0.0", optional = true  }
+oxideav-g7231 = { version = "0.0", optional = true  }
+oxideav-g728 = { version = "0.0", optional = true  }
+oxideav-g729 = { version = "0.0", optional = true  }
+oxideav-ilbc = { version = "0.0", optional = true  }
+oxideav-gsm = { version = "0.0", optional = true  }
+oxideav-speex = { version = "0.0", optional = true  }
+oxideav-vp9 = { version = "0.0", optional = true  }
+oxideav-h265 = { version = "0.0", optional = true  }
+oxideav-h266 = { version = "0.0", optional = true  }
+oxideav-h264 = { version = "0.0", optional = true  }
+oxideav-av1 = { version = "0.1", optional = true  }
+oxideav-h263 = { version = "0.0", optional = true  }
+oxideav-h261 = { version = "0.0", optional = true  }
+oxideav-vp8 = { version = "0.1", optional = true  }
+oxideav-vp6 = { version = "0.0", optional = true  }
+oxideav-webp = { version = "0.0", optional = true  }
+oxideav-gif = { version = "0.0", optional = true  }
+oxideav-png = { version = "0.1", optional = true  }
+oxideav-amv = { version = "0.0", optional = true  }
+oxideav-subtitle = { version = "0.0", optional = true  }
+oxideav-sub-image = { version = "0.0", optional = true  }
+oxideav-ass = { version = "0.0", optional = true  }
+oxideav-ffv1 = { version = "0.0", optional = true  }
+oxideav-dirac = { version = "0.0", optional = true  }
+oxideav-prores = { version = "0.0", optional = true  }
+oxideav-jpegxl = { version = "0.0", optional = true  }
+oxideav-jpeg2000 = { version = "0.0", optional = true  }
+oxideav-avif = { version = "0.0", optional = true  }
+oxideav-audio-filter = { version = "0.0", optional = true  }
+oxideav-image-filter = { version = "0.0", optional = true  }
+oxideav-pixfmt = { version = "0.1", optional = true  }
+oxideav-scene = { version = "0.0", optional = true  }
