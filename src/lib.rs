@@ -64,14 +64,12 @@ pub use oxideav_g728 as g728;
 pub use oxideav_g729 as g729;
 #[cfg(feature = "gif")]
 pub use oxideav_gif as gif;
-#[cfg(feature = "ilbc")]
-pub use oxideav_ilbc as ilbc;
 #[cfg(feature = "gsm")]
 pub use oxideav_gsm as gsm;
-#[cfg(feature = "h263")]
-pub use oxideav_h263 as h263;
 #[cfg(feature = "h261")]
 pub use oxideav_h261 as h261;
+#[cfg(feature = "h263")]
+pub use oxideav_h263 as h263;
 #[cfg(feature = "h264")]
 pub use oxideav_h264 as h264;
 #[cfg(feature = "h265")]
@@ -80,6 +78,8 @@ pub use oxideav_h265 as h265;
 pub use oxideav_h266 as h266;
 #[cfg(feature = "iff")]
 pub use oxideav_iff as iff;
+#[cfg(feature = "ilbc")]
+pub use oxideav_ilbc as ilbc;
 #[cfg(feature = "image_filter")]
 pub use oxideav_image_filter as image_filter;
 #[cfg(feature = "jpeg2000")]
