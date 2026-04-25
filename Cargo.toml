@@ -152,9 +152,10 @@ http = ["dep:oxideav-http"]
 scene = ["dep:oxideav-scene"]
 
 [dependencies]
+# Codec / container trait + registry types are now in oxideav-core
+# directly; the former oxideav-codec / oxideav-container shim crates
+# have been archived.
 oxideav-core = { workspace = true }
-oxideav-codec = { workspace = true }
-oxideav-container = { workspace = true }
 oxideav-pipeline = { workspace = true }
 oxideav-source = { workspace = true }
 oxideav-http = { workspace = true, optional = true }
