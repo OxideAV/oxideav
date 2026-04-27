@@ -198,7 +198,7 @@ oxideav-speex = { version = "0.0", optional = true  }
 oxideav-vp9 = { version = "0.0", optional = true  }
 oxideav-h265 = { version = "0.0", optional = true  }
 oxideav-h266 = { version = "0.0", optional = true  }
-oxideav-h264 = { version = "0.0", optional = true  }
+oxideav-h264 = { version = "0.1", optional = true  }
 oxideav-av1 = { version = "0.1", optional = true  }
 oxideav-h263 = { version = "0.0", optional = true  }
 oxideav-h261 = { version = "0.0", optional = true  }
@@ -220,4 +220,4 @@ oxideav-avif = { version = "0.0", optional = true  }
 oxideav-audio-filter = { version = "0.0", optional = true  }
 oxideav-image-filter = { version = "0.0", optional = true  }
 oxideav-pixfmt = { version = "0.1", optional = true  }
-oxideav-scene = { version = "0.0", optional = true  }
+oxideav-scene = { version = "0.1", optional = true  }
