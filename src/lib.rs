@@ -23,6 +23,8 @@ pub use oxideav_core::RuntimeContext;
 
 #[cfg(feature = "http")]
 pub use oxideav_http as http;
+#[cfg(feature = "generator")]
+pub use oxideav_generator as generator;
 
 #[cfg(feature = "aac")]
 pub use oxideav_aac as aac;
@@ -402,6 +404,11 @@ pub fn with_all_features() -> RuntimeContext {
     #[cfg(feature = "http")]
     {
         oxideav_http::register(&mut ctx.sources);
+    }
+    #[cfg(feature = "generator")]
+    {
+        oxideav_generator::register_source(&mut ctx.sources);
+        oxideav_generator::register_filters(&mut ctx);
     }
 
     ctx

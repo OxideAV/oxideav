@@ -78,6 +78,7 @@ default = [
     "jpegxl",
     "jpeg2000",
     "avif",
+    "generator",
 ]
 basic = ["dep:oxideav-basic"]
 ogg = ["dep:oxideav-ogg"]
@@ -150,6 +151,9 @@ image_filter = ["dep:oxideav-image-filter"]
 pixfmt = ["dep:oxideav-pixfmt"]
 # HTTP/HTTPS source driver. Off by default — opt in to link ureq + rustls.
 http = ["dep:oxideav-http"]
+# Synthetic media generator (`generate://` URI scheme + zero-input filters).
+# Default-on so `convert xc:red` etc. work out of the box.
+generator = ["dep:oxideav-generator"]
 # Time-based scene / composition model. Off by default — experimental
 # scaffold (PDF pages, RTMP compositor, NLE timelines).
 scene = ["dep:oxideav-scene"]
@@ -221,3 +225,4 @@ oxideav-audio-filter = { version = "0.0", optional = true  }
 oxideav-image-filter = { version = "0.0", optional = true  }
 oxideav-pixfmt = { version = "0.1", optional = true  }
 oxideav-scene = { version = "0.1", optional = true  }
+oxideav-generator = { version = "0.1", optional = true  }
