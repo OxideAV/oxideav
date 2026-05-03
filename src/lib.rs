@@ -116,6 +116,8 @@ pub use oxideav_msmpeg4 as msmpeg4;
 pub use oxideav_ogg as ogg;
 #[cfg(feature = "opus")]
 pub use oxideav_opus as opus;
+#[cfg(feature = "pbm")]
+pub use oxideav_pbm as pbm;
 #[cfg(feature = "pixfmt")]
 pub use oxideav_pixfmt as pixfmt;
 #[cfg(feature = "png")]
@@ -348,6 +350,10 @@ pub fn with_all_features() -> RuntimeContext {
     #[cfg(feature = "png")]
     {
         oxideav_png::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "pbm")]
+    {
+        oxideav_pbm::register(&mut ctx.codecs, &mut ctx.containers);
     }
     #[cfg(feature = "amv")]
     {
