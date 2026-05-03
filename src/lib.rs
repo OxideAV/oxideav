@@ -124,6 +124,8 @@ pub use oxideav_pixfmt as pixfmt;
 pub use oxideav_png as png;
 #[cfg(feature = "prores")]
 pub use oxideav_prores as prores;
+#[cfg(feature = "raster")]
+pub use oxideav_raster as raster;
 #[cfg(feature = "s3m")]
 pub use oxideav_s3m as s3m;
 #[cfg(feature = "scene")]

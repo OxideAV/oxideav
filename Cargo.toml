@@ -80,6 +80,7 @@ default = [
     "jpeg2000",
     "avif",
     "generator",
+    "raster",
 ]
 basic = ["dep:oxideav-basic"]
 ogg = ["dep:oxideav-ogg"]
@@ -163,6 +164,11 @@ http = ["dep:oxideav-http"]
 # Synthetic media generator (`generate://` URI scheme + zero-input filters).
 # Default-on so `convert xc:red` etc. work out of the box.
 generator = ["dep:oxideav-generator"]
+# Vector→raster rendering kernel — turns a VectorFrame (SVG/PDF
+# scene graph) into a packed Rgba VideoFrame. Default-on because
+# downstream consumers (CLI render, player composite) need it as
+# the bridge between vector decoders and pixel sinks.
+raster = ["dep:oxideav-raster"]
 # Time-based scene / composition model. Off by default — experimental
 # scaffold (PDF pages, RTMP compositor, NLE timelines).
 scene = ["dep:oxideav-scene"]
@@ -236,3 +242,4 @@ oxideav-image-filter = { version = "0.1", optional = true  }
 oxideav-pixfmt = { version = "0.1", optional = true  }
 oxideav-scene = { version = "0.1", optional = true  }
 oxideav-generator = { version = "0.1", optional = true  }
+oxideav-raster = { version = "0.1", optional = true  }
