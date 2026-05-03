@@ -21,10 +21,10 @@ pub use oxideav_source as source;
 
 pub use oxideav_core::RuntimeContext;
 
-#[cfg(feature = "http")]
-pub use oxideav_http as http;
 #[cfg(feature = "generator")]
 pub use oxideav_generator as generator;
+#[cfg(feature = "http")]
+pub use oxideav_http as http;
 
 #[cfg(feature = "aac")]
 pub use oxideav_aac as aac;
