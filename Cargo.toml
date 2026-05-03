@@ -222,7 +222,7 @@ oxideav-jpegxl = { version = "0.0", optional = true  }
 oxideav-jpeg2000 = { version = "0.0", optional = true  }
 oxideav-avif = { version = "0.0", optional = true  }
 oxideav-audio-filter = { version = "0.1", optional = true  }
-oxideav-image-filter = { version = "0.0", optional = true  }
+oxideav-image-filter = { version = "0.1", optional = true  }
 oxideav-pixfmt = { version = "0.1", optional = true  }
 oxideav-scene = { version = "0.1", optional = true  }
 oxideav-generator = { version = "0.1", optional = true  }
