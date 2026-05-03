@@ -66,6 +66,7 @@ default = [
     "gif",
     "png",
     "pbm",
+    "svg",
     "amv",
     "subtitle",
     "sub_image",
@@ -135,6 +136,7 @@ webp = ["dep:oxideav-webp"]
 gif = ["dep:oxideav-gif"]
 png = ["dep:oxideav-png"]
 pbm = ["dep:oxideav-pbm"]
+svg = ["dep:oxideav-svg"]
 # Netpbm convenience aliases — PBM/PGM/PPM/PNM/PAM all live in the
 # same self-contained crate (the magic byte at offset 1 disambiguates),
 # so any of these feature names pulls in the one crate.
@@ -172,6 +174,9 @@ raster = ["dep:oxideav-raster"]
 # Time-based scene / composition model. Off by default — experimental
 # scaffold (PDF pages, RTMP compositor, NLE timelines).
 scene = ["dep:oxideav-scene"]
+# PDF writer — vector-stays-vector path. Off by default since PDF is
+# rarely a transcoding target; opt in to pull in oxideav-pdf + flate2.
+pdf = ["dep:oxideav-pdf"]
 
 [dependencies]
 # Codec / container trait + registry types are now in oxideav-core
@@ -227,6 +232,7 @@ oxideav-webp = { version = "0.0", optional = true  }
 oxideav-gif = { version = "0.0", optional = true  }
 oxideav-png = { version = "0.1", optional = true  }
 oxideav-pbm = { version = "0.0", optional = true  }
+oxideav-svg = { version = "0.1", optional = true  }
 oxideav-amv = { version = "0.0", optional = true  }
 oxideav-subtitle = { version = "0.0", optional = true  }
 oxideav-sub-image = { version = "0.0", optional = true  }
@@ -243,3 +249,4 @@ oxideav-pixfmt = { version = "0.1", optional = true  }
 oxideav-scene = { version = "0.1", optional = true  }
 oxideav-generator = { version = "0.1", optional = true  }
 oxideav-raster = { version = "0.1", optional = true  }
+oxideav-pdf = { version = "0.0", optional = true  }

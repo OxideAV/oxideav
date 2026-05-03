@@ -118,6 +118,8 @@ pub use oxideav_ogg as ogg;
 pub use oxideav_opus as opus;
 #[cfg(feature = "pbm")]
 pub use oxideav_pbm as pbm;
+#[cfg(feature = "pdf")]
+pub use oxideav_pdf as pdf;
 #[cfg(feature = "pixfmt")]
 pub use oxideav_pixfmt as pixfmt;
 #[cfg(feature = "png")]
@@ -136,6 +138,8 @@ pub use oxideav_speex as speex;
 pub use oxideav_sub_image as sub_image;
 #[cfg(feature = "subtitle")]
 pub use oxideav_subtitle as subtitle;
+#[cfg(feature = "svg")]
+pub use oxideav_svg as svg;
 #[cfg(feature = "theora")]
 pub use oxideav_theora as theora;
 #[cfg(feature = "vorbis")]
@@ -356,6 +360,14 @@ pub fn with_all_features() -> RuntimeContext {
     #[cfg(feature = "pbm")]
     {
         oxideav_pbm::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "pdf")]
+    {
+        oxideav_pdf::register(&mut ctx.codecs, &mut ctx.containers);
+    }
+    #[cfg(feature = "svg")]
+    {
+        oxideav_svg::register(&mut ctx.codecs, &mut ctx.containers);
     }
     #[cfg(feature = "amv")]
     {
