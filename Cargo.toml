@@ -185,6 +185,12 @@ pdf = ["dep:oxideav-pdf"]
 oxideav-core = { version = "0.1" }
 oxideav-pipeline = { version = "0.1" }
 oxideav-source = { version = "0.1" }
+# `with_all_features` emits one `log::debug!` per crate it registers,
+# so consumers that install a logger (e.g. the CLI's `--debug`) can
+# see startup progress + diagnose hangs. log is a tiny façade with
+# no transitive deps; the target call site is a no-op when no logger
+# is installed.
+log = "0.4"
 oxideav-http = { version = "0.0", optional = true  }
 oxideav-basic = { version = "0.0", optional = true  }
 oxideav-ogg = { version = "0.1", optional = true  }
