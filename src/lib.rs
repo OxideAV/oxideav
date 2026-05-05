@@ -473,11 +473,13 @@ pub fn with_all_features_traced<F: FnMut(&str)>(mut trace: F) -> RuntimeContext 
     {
         trace("jpegxl");
         oxideav_jpegxl::register(&mut ctx.codecs);
+        oxideav_jpegxl::register_containers(&mut ctx.containers);
     }
     #[cfg(feature = "jpeg2000")]
     {
         trace("jpeg2000");
         oxideav_jpeg2000::register(&mut ctx.codecs);
+        oxideav_jpeg2000::register_containers(&mut ctx.containers);
     }
     #[cfg(feature = "avif")]
     {
