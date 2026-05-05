@@ -255,4 +255,4 @@ oxideav-pixfmt = { version = "0.1", optional = true  }
 oxideav-scene = { version = "0.1", optional = true  }
 oxideav-generator = { version = "0.1", optional = true  }
 oxideav-raster = { version = "0.1", optional = true  }
-oxideav-pdf = { version = "0.0", optional = true  }
+oxideav-pdf = { version = "0.1", optional = true  }
