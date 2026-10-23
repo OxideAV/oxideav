@@ -4,8 +4,8 @@ name = "oxideav"
 # workspace root to inherit from. Workspace builds still work because
 # Cargo prefers the package-level values when both are defined.
 version = "0.0.4"
-edition = "2021"
-rust-version = "1.80"
+edition = "2024"
+rust-version = "1.95"
 license = "MIT"
 repository = "https://github.com/OxideAV/oxideav"
 authors = ["Mark Karpeles"]
