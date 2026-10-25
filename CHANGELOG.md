@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `StreamDecoder`: a decoder bundled with its stream's parameters.
+  `stream_params()` returns the container's `CodecParameters` with the
+  decoder's own report (oxideav-core 0.1.42 `Decoder::output_params`:
+  emitted size, pixel / sample format, rate, channels) merged over
+  them — known right after `open` when the decoder's configuration
+  record states it, and kept current after every `receive_frame` by an
+  `OutputParamsWatch` (one integer compare per frame);
+  `params_changed()` flags the frame that changed them (a mid-stream
+  switch). Crate docs and README explain why frames carry no format
+  fields (stream metadata, stated once).
+
 ## [0.0.5](https://github.com/OxideAV/oxideav/compare/v0.0.4...v0.0.5) - 2026-10-25
 
 ### Other

@@ -37,6 +37,29 @@ decoder.set_execution_context(&oxideav::ExecutionContext::auto());
 budget. The `oxideav::pipeline` helpers (`transcode_simple*`,
 `Pipeline`, `Executor`) announce a budget themselves.
 
+## Stream parameters, not frame fields
+
+Frames carry no format fields **by design**: a `VideoFrame` holds
+planes and a pts, an `AudioFrame` samples and a pts. Width, height,
+pixel format, sample format, rate and channel layout are stated once,
+in the stream's `CodecParameters` — not repeated on every frame.
+
+The container's parameters are only its claim (some leave the pixel
+layout out, some state a coded rather than a cropped size). The decoder
+knows what it emits, and `oxideav::StreamDecoder` merges its report
+over the stream parameters, keeping them current through mid-stream
+changes with one integer compare per frame:
+
+```rust,ignore
+let mut dec = oxideav::StreamDecoder::open(&ctx, &stream.params)?;
+dec.send_packet(&pkt)?;
+let frame = dec.receive_frame()?;
+let p = dec.stream_params();  // width / height / pixel_format of `frame`
+if dec.params_changed() {
+    // a mid-stream switch: reconfigure the renderer / scaler
+}
+```
+
 ## License
 
 MIT — see [LICENSE](https://github.com/OxideAV/oxideav-workspace/blob/master/LICENSE).

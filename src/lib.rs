@@ -68,6 +68,31 @@
 //! let frame = dec.receive_frame()?;
 //! ```
 
+//!
+//! # Stream parameters, not frame fields
+//!
+//! Frames carry no format fields **by design**: a `VideoFrame` has
+//! planes and a pts, an `AudioFrame` samples and a pts. Width, height,
+//! pixel format, sample format, sample rate and channel layout do not
+//! change sixty times a second, so they are stated once, in the
+//! stream's [`CodecParameters`](core::CodecParameters). Read them from
+//! the stream — and since the decoder knows better than the container
+//! what it emits (the cropped size, the layout a container left out),
+//! use [`StreamDecoder`], which merges the decoder's report into the
+//! stream parameters and keeps them current through mid-stream changes:
+//!
+//! ```ignore
+//! let mut dec = oxideav::StreamDecoder::open(&ctx, &stream.params)?;
+//! dec.send_packet(&pkt)?;
+//! let frame = dec.receive_frame()?;
+//! let p = dec.stream_params(); // width / height / pixel_format of `frame`
+//! if dec.params_changed() { /* first frame or a mid-stream switch */ }
+//! ```
+
+mod stream;
+
+pub use stream::StreamDecoder;
+
 pub use oxideav_core as core;
 pub use oxideav_core::{ExecutionContext, RuntimeContext};
 pub use oxideav_pipeline as pipeline;
