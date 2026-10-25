@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `open_decoder` / `open_encoder` (+ `_with` taking `CodecPreferences`
+  and an `ExecutionContext`): build the preferred implementation from a
+  `RuntimeContext` with a thread budget already announced — default
+  `ExecutionContext::auto()`. A codec built straight from the registry
+  runs single-threaded until `set_execution_context` is called; the
+  crate docs and README now show that one line.
+- `ExecutionContext` re-exported at the crate root.
+
 ### Changed
 
 - edition 2024, MSRV 1.95.
