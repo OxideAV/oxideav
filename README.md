@@ -60,6 +60,26 @@ if dec.params_changed() {
 }
 ```
 
+### Mid-stream changes: event or counter
+
+A decoder announces a mid-stream change of its output shape through its
+generation counter and — if it emits it — the in-band
+`Frame::StreamParams` event, returned right before the first frame of
+the new shape. `StreamDecoder` follows both and reports each change
+once:
+
+| Pull | Returns the event? | Where the change is flagged |
+|---|---|---|
+| `receive_frame()` | never — media frames only | `params_changed()` on the first frame of the new shape |
+| `receive_frame_or_event()` (opt-in) | yes, as-is, in position | `params_changed()` on the event (on the first new-shape frame for a decoder that emits none) |
+
+`params_generation()` counts the changes, so a consumer holding frames
+in a queue can compare two values instead of tracking every pull.
+A decoder used directly (`oxideav::open_decoder`) returns its events
+from `receive_frame` — skip them with `frame.is_stream_params()` where
+only media is wanted; an encoder handed one returns
+`Error::Unsupported` unless it can re-configure.
+
 ## License
 
 MIT — see [LICENSE](https://github.com/OxideAV/oxideav-workspace/blob/master/LICENSE).

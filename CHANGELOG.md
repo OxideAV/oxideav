@@ -19,6 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `params_changed()` flags the frame that changed them (a mid-stream
   switch). Crate docs and README explain why frames carry no format
   fields (stream metadata, stated once).
+- `StreamDecoder` follows the in-band `Frame::StreamParams` event
+  (oxideav-core 0.1.43) as well as the generation counter, so
+  `stream_params()` is truthful whichever a decoder implements and each
+  mid-stream change is reported exactly once:
+  - `receive_frame()` (simple API) never returns the event: it merges it
+    (`OutputParamsWatch::observe_frame`) and returns the next media
+    frame with `params_changed()` set. When the decoder answers
+    `NeedMore` between the event and that frame, the parameters already
+    describe the frame to come and the change is flagged when it comes.
+  - `receive_frame_or_event()` (low-level opt-in) yields the decoder's
+    event as-is, in position, with `params_changed()` set on the event;
+    a counter-only decoder yields no invented event (the change is
+    flagged on its first new-shape frame).
+  - `params_generation()`: a counter of reported changes, for comparing
+    "did the shape change between these two frames" across a queue.
+- Crate docs: a decoder used directly (`open_decoder`) returns its
+  events from `receive_frame`; skip them with `is_stream_params()` where
+  only media is wanted. Two broken / redundant intra-doc links fixed.
 
 ## [0.0.5](https://github.com/OxideAV/oxideav/compare/v0.0.4...v0.0.5) - 2026-10-25
 

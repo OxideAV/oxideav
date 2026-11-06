@@ -17,6 +17,32 @@
 //! keyframe, a sample-rate change in a chained stream) with one integer
 //! compare per frame ([`OutputParamsWatch`]), and hands it out through
 //! [`StreamDecoder::stream_params`].
+//!
+//! # Mid-stream changes: the event and the counter
+//!
+//! A decoder announces a mid-stream change of its output shape through
+//! its generation counter ([`Decoder::output_params_generation`]) and —
+//! if it emits it — through the in-band [`Frame::StreamParams`] event,
+//! returned immediately before the first frame of the new shape. A
+//! `StreamDecoder` follows both, so it is truthful whichever a decoder
+//! implements, and reports each change exactly once.
+//!
+//! The two pull methods differ only in whether the event reaches you:
+//!
+//! * [`StreamDecoder::receive_frame`] — the simple API — **never**
+//!   returns the event: it folds it into
+//!   [`stream_params`](StreamDecoder::stream_params) and returns the
+//!   next media frame. [`params_changed`](StreamDecoder::params_changed)
+//!   (and a moved [`params_generation`](StreamDecoder::params_generation))
+//!   says the shape changed before that frame. Code written before the
+//!   event existed sees only media frames.
+//! * [`StreamDecoder::receive_frame_or_event`] — the low-level opt-in —
+//!   returns the decoder's events as-is, in position, for a consumer
+//!   that forwards the frame stream (a filter graph, an encoder that
+//!   re-configures) and wants the change in the stream itself. A
+//!   decoder that only moves its counter emits no event, and none is
+//!   invented: the change is flagged on the first frame of the new shape
+//!   instead.
 
 use oxideav_core::{
     CodecParameters, Decoder, ExecutionContext, Frame, OutputParamsWatch, Packet, Result,
@@ -74,7 +100,14 @@ pub struct StreamDecoder {
     decoder: Box<dyn Decoder>,
     params: CodecParameters,
     watch: OutputParamsWatch,
+    /// The last successful pull changed `params`.
     changed: bool,
+    /// An event was folded into `params` by `receive_frame` but the
+    /// frame of the new shape has not been returned yet (the decoder
+    /// answered `NeedMore` / `Eof` / an error in between).
+    pending: bool,
+    /// Number of changes reported so far.
+    generation: u64,
 }
 
 impl StreamDecoder {
@@ -108,6 +141,8 @@ impl StreamDecoder {
             params: stream,
             watch: OutputParamsWatch::new(),
             changed: false,
+            pending: false,
+            generation: 0,
         };
         s.watch.prime(&*s.decoder, &mut s.params);
         s
@@ -121,12 +156,33 @@ impl StreamDecoder {
         &self.params
     }
 
-    /// Whether the last successful [`receive_frame`](Self::receive_frame)
-    /// changed [`stream_params`](Self::stream_params) — its first
-    /// resolution, or a mid-stream switch. One integer compare per
-    /// frame while nothing changes.
+    /// Whether the last successful pull changed
+    /// [`stream_params`](Self::stream_params) — its first resolution, or
+    /// a mid-stream switch. One integer compare per frame while nothing
+    /// changes.
+    ///
+    /// After [`receive_frame`](Self::receive_frame) it is `true` on the
+    /// first frame of a new shape, whether the decoder announced the
+    /// change with a [`Frame::StreamParams`] event (consumed on the way)
+    /// or only through its generation counter. After
+    /// [`receive_frame_or_event`](Self::receive_frame_or_event) it is
+    /// `true` on the event itself (and `false` on the frame after it),
+    /// or on the first frame of the new shape when the decoder emits no
+    /// event.
     pub fn params_changed(&self) -> bool {
         self.changed
+    }
+
+    /// A counter of the changes reported so far: it moves exactly when
+    /// [`params_changed`](Self::params_changed) is `true`. Keep the
+    /// value seen with a frame and compare it with a later one to ask
+    /// "did the shape change between these two" without tracking every
+    /// pull — e.g. across a queue between a decode thread and a
+    /// renderer. Starts at `0` — the shape known at construction (from
+    /// the decoder's configuration record) is the baseline; a shape the
+    /// decoder resolves only at the first frame counts as a change.
+    pub fn params_generation(&self) -> u64 {
+        self.generation
     }
 
     /// Feed one packet of this stream.
@@ -134,12 +190,76 @@ impl StreamDecoder {
         self.decoder.send_packet(packet)
     }
 
-    /// Pull the next frame; [`stream_params`](Self::stream_params)
+    /// Pull the next **media** frame; [`stream_params`](Self::stream_params)
     /// describes it on return.
+    ///
+    /// A [`Frame::StreamParams`] event from the decoder is never returned
+    /// here: it is merged into [`stream_params`](Self::stream_params)
+    /// and the frame after it is returned, with
+    /// [`params_changed`](Self::params_changed) set. If the decoder
+    /// answers [`Error::NeedMore`](oxideav_core::Error::NeedMore) between
+    /// the event and that frame, the error is returned as usual (the
+    /// parameters then already describe the frame to come) and the change
+    /// is flagged on the next frame returned. Use
+    /// [`receive_frame_or_event`](Self::receive_frame_or_event) to see
+    /// the event itself.
     pub fn receive_frame(&mut self) -> Result<Frame> {
+        loop {
+            let frame = self.decoder.receive_frame()?;
+            if frame.is_stream_params() {
+                self.pending |= self.absorb_event(&frame);
+                continue;
+            }
+            let changed = self.watch.observe(&*self.decoder, &mut self.params)
+                | std::mem::take(&mut self.pending);
+            self.set_changed(changed);
+            return Ok(frame);
+        }
+    }
+
+    /// Low-level pull: the next frame **or** the decoder's
+    /// [`Frame::StreamParams`] event, as-is and in position (after the
+    /// last frame of the old shape, before the first of the new one).
+    ///
+    /// On an event, [`stream_params`](Self::stream_params) already
+    /// describes the new shape (the event's parameters merged over the
+    /// stream, container-side fields kept) and
+    /// [`params_changed`](Self::params_changed) is `true`; the frame after
+    /// it reports no second change. A decoder that announces changes only
+    /// through its generation counter yields no event here — the change
+    /// is flagged on the first frame of the new shape, as with
+    /// [`receive_frame`](Self::receive_frame).
+    ///
+    /// Opt-in: forward the event to stages that understand it (filters
+    /// re-plan, an encoder that cannot re-configure rejects it with
+    /// [`Error::Unsupported`](oxideav_core::Error::Unsupported)), and
+    /// skip it ([`Frame::is_stream_params`]) where only media is wanted.
+    pub fn receive_frame_or_event(&mut self) -> Result<Frame> {
         let frame = self.decoder.receive_frame()?;
-        self.changed = self.watch.observe(&*self.decoder, &mut self.params);
+        let changed = if frame.is_stream_params() {
+            self.absorb_event(&frame) | std::mem::take(&mut self.pending)
+        } else {
+            self.watch.observe(&*self.decoder, &mut self.params) | std::mem::take(&mut self.pending)
+        };
+        self.set_changed(changed);
         Ok(frame)
+    }
+
+    /// Fold an event into the parameters; `true` when that changed
+    /// them. The watch then records the decoder's (already bumped)
+    /// generation, so the frame after the event costs one compare and
+    /// reports no second change.
+    fn absorb_event(&mut self, event: &Frame) -> bool {
+        let merged = self.watch.observe_frame(event, &mut self.params);
+        let read = self.watch.observe(&*self.decoder, &mut self.params);
+        merged | read
+    }
+
+    fn set_changed(&mut self, changed: bool) {
+        self.changed = changed;
+        if changed {
+            self.generation = self.generation.wrapping_add(1);
+        }
     }
 
     /// Signal end of stream; remaining frames come out of
@@ -150,7 +270,9 @@ impl StreamDecoder {
 
     /// Discard decoder state (after a seek). The parameters stay; a
     /// decoder whose shape differs at the new position reports it with
-    /// the first frame returned afterwards.
+    /// the first frame returned afterwards (by event or counter, as
+    /// during playback). A change already folded in from an event whose
+    /// frame never came out is still flagged on that first frame.
     pub fn reset(&mut self) -> Result<()> {
         self.changed = false;
         self.decoder.reset()
@@ -162,8 +284,10 @@ impl StreamDecoder {
     }
 
     /// The wrapped decoder, mutably. Frames pulled through it directly
-    /// bypass the watch: call [`receive_frame`](Self::receive_frame)
-    /// instead to keep [`stream_params`](Self::stream_params) current.
+    /// bypass the watch (and include the decoder's raw
+    /// [`Frame::StreamParams`] events): call
+    /// [`receive_frame`](Self::receive_frame) instead to keep
+    /// [`stream_params`](Self::stream_params) current.
     pub fn decoder_mut(&mut self) -> &mut dyn Decoder {
         &mut *self.decoder
     }
@@ -180,6 +304,7 @@ impl std::fmt::Debug for StreamDecoder {
             .field("codec_id", self.decoder.codec_id())
             .field("params", &self.params)
             .field("changed", &self.changed)
+            .field("generation", &self.generation)
             .finish()
     }
 }
