@@ -3,7 +3,7 @@ name = "oxideav"
 # Standalone-friendly literals — the sibling repo's CI doesn't have a
 # workspace root to inherit from. Workspace builds still work because
 # Cargo prefers the package-level values when both are defined.
-version = "0.0.5"
+version = "0.0.6"
 edition = "2024"
 rust-version = "1.95"
 license = "MIT"
